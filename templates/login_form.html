@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lane="en">
+    <head>
+        <title>login test</title>
+    </head>
+    <body>
+        <form method="post" action="/login">
+            <fieldset style = "width:150">
+                <legend>Enter login infomation</legend>
+                    StudentId : <input type="text" name="studentid" placeholder="20140449"><br><br>
+                    Password : <input type="password" name="password" placeholder="Password"><br><br>
+                    <button type="submit">login</button><br><br>
+                    <button type="submit" formmethod="get" formaction="/signup_form">signup</button><br><br>
+                    <button type="submit" formmethod="get" formaction="/find_form">forget account</button><br><br>
+                    <button type="submit" formmethod="get" formaction="/withdraw_form">withdraw</button><br><br>
+            </fieldset>
+        </form>
+    </body>
+</html>
+
+
