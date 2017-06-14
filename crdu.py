@@ -11,10 +11,6 @@ app = Flask(__name__)
 
 con = mdb.connect('localhost', 'root', 'wngml5436', 'oss');
 @app.route('/')
-def hello_world():
-    return 'Hello World'
-
-@app.route('/login_form')
 def login_form():
     return render_template('login_form.html')
 
@@ -26,19 +22,19 @@ def login():
             cur.execute("SELECT * FROM Members WHERE StudentId="+request.form['studentid'])
             if cur.rowcount == 0:
                 cur.close()
-                return 'Your studentid is not registered yet, please signup'
+                return render_template('default_form.html', message = 'Your studentid is not registered yet, please signup')
             
             cur.execute("SELECT * FROM Members WHERE StudentId="+request.form['studentid']+" and Password=\'"+request.form['password']+"\'")
             if cur.rowcount == 0:
                 cur.close()
-                return 'Your password is wrong'
+                return render_template('default_form.html', message = 'Your password is wrong')
             rows = cur.fetchall()
 
             session['logged_in'] = True
             session['studentid'] = request.form['studentid']
-            return "Welcome " + rows[0]["FirstName"]
+            return render_template('default_form.html', message = "Welcome " + rows[0]["FirstName"])
     else:
-        return 'Wrong approach'
+        return render_template('default_form.html', message = 'Wrong approach')
 
 @app.route('/signup_form')
 def signup_form():
@@ -52,11 +48,11 @@ def signup():
             cur.execute("SELECT * FROM Members WHERE StudentId="+request.form['studentid'])
             if cur.rowcount > 0:
                 cur.close()
-                return 'Your studentid is already registered'
+                return render_template('default_form.html', message = 'Your studentid is already registered')
             cur.execute("INSERT INTO Members(StudentId, PhoneNumber, LastName, FirstName, Password) VALUES("+request.form['studentid']+","+request.form['phonenumber']+",\'"+ request.form['lastname']+"\', \'"+ request.form['firstname']+"\', \'"+ request.form['password']+"\')")
-        return "Welcome " + request.form['firstname']
+        return render_template('default_form.html', message = "Welcome " + request.form['firstname'] )
     else:
-        return 'Wrong approach'
+        return render_template('default_form.html', message = 'Wrong approach')
 
 @app.route('/withdraw_form')
 def withdraw_form():
@@ -70,17 +66,17 @@ def withdraw():
             cur.execute("SELECT * FROM Members WHERE StudentId="+request.form['studentid']+" and PhoneNumber="+request.form['phonenumber'])
             if cur.rowcount == 0:
                 cur.close()
-                return 'There is no such a member'
+                return render_template('default_form.html', message = 'There is no such a member' )
             
             rows = cur.fetchall()
             if rows[0]['Password']!=str(request.form['password']):
                 cur.close()
-                return 'You put wrong password'
+                return render_template('default_form.html', message = 'You put wrong password')
             user = rows[0]['FirstName']
             cur.execute("DELETE FROM Members WHERE StudentId="+request.form['studentid']+" and PhoneNumber="+request.form['phonenumber'])
-            return "Goodbye " + user 
+            return render_template('default_form.html', message="Goodbye "+user)
     else:
-        return 'Wrong approach'
+        return render_template('default_form.html', message = 'Wrong approach')
 
 @app.route('/find_form')
 def find_form():
@@ -94,15 +90,15 @@ def find():
             cur.execute("SELECT * FROM Members WHERE StudentId="+request.form['studentid']+" and PhoneNumber="+request.form['phonenumber'])
             if cur.rowcount == 0:
                 cur.close()
-                return 'There is no such a member'
+                return render_template('default_form.html', message = 'There is no such a member' )
             
             rows = cur.fetchall()
             user = rows[0]['FirstName']
 
             cur.execute("UPDATE Members SET Password=\'"+request.form['password']+"\' WHERE StudentId="+request.form['studentid'])
-            return user+", your password is updated" 
+            return render_template('default_form.html', message = user+", your password is updated")
     else:
-        return 'Wrong approach'
+        return render_template('default_form.html', message = 'Wrong approach')
 
 app.secret_key = 'sample_secret_key'
 
