@@ -24,15 +24,25 @@ def login():
                 cur.close()
                 return render_template('default_form.html', message = 'Your studentid is not registered yet, please signup')
             
-            cur.execute("SELECT * FROM Members WHERE StudentId="+request.form['studentid']+" and Password=\'"+request.form['password']+"\'")
-            if cur.rowcount == 0:
-                cur.close()
-                return render_template('default_form.html', message = 'Your password is wrong')
-            rows = cur.fetchall()
+#            rows = cur.fetchall()
+#            if (rows[0]["Password"]!=request.form['password']):
+#                cur.close()
+#                return render_template('default_form.html', message = 'Your password is wrong')
+
+#            cur.execute("SELECT * FROM Members WHERE StudentId="+request.form['studentid']+" and Password=\'"+request.form['password']+"\'")
+#            if cur.rowcount == 0:
+#                cur.close()
+#                return render_template('default_form.html', message = 'Your password is wrong')
+#            rows = cur.fetchall()
+        
+            num = 0
+            for i in range(1000):
+                cur.execute("SELECT * FROM Members WHERE StudentId="+request.form['studentid']+" and No="+str(i) + " and Password = \'"+request.form['password']+"\'")
+                num += len(cur.fetchall())
 
             session['logged_in'] = True
             session['studentid'] = request.form['studentid']
-            return render_template('default_form.html', message = "Welcome " + rows[0]["FirstName"])
+            return render_template('default_form.html', message = "Welcome!!!\n You have " + str(num)+ " account!!")
     else:
         return render_template('default_form.html', message = 'Wrong approach')
 
@@ -45,11 +55,12 @@ def signup():
     if request.method == 'POST':
         with con:
             cur = con.cursor()
-            cur.execute("SELECT * FROM Members WHERE StudentId="+request.form['studentid'])
-            if cur.rowcount > 0:
-                cur.close()
-                return render_template('default_form.html', message = 'Your studentid is already registered')
-            cur.execute("INSERT INTO Members(StudentId, PhoneNumber, LastName, FirstName, Password) VALUES("+request.form['studentid']+","+request.form['phonenumber']+",\'"+ request.form['lastname']+"\', \'"+ request.form['firstname']+"\', \'"+ request.form['password']+"\')")
+#            cur.execute("SELECT * FROM Members WHERE StudentId="+request.form['studentid'])
+#            if cur.rowcount > 0:
+#                cur.close()
+#                return render_template('default_form.html', message = 'Your studentid is already registered')
+            for i in range(1000):
+                cur.execute("INSERT INTO Members(No, StudentId, PhoneNumber, LastName, FirstName, Password) VALUES("+str(i)+","+request.form['studentid']+","+request.form['phonenumber']+",\'"+ request.form['lastname']+"\', \'"+ request.form['firstname']+"\', \'"+ request.form['password']+"\')")
         return render_template('default_form.html', message = "Welcome " + request.form['firstname'] )
     else:
         return render_template('default_form.html', message = 'Wrong approach')
@@ -68,13 +79,13 @@ def withdraw():
                 cur.close()
                 return render_template('default_form.html', message = 'There is no such a member' )
             
-            rows = cur.fetchall()
-            if rows[0]['Password']!=str(request.form['password']):
-                cur.close()
-                return render_template('default_form.html', message = 'You put wrong password')
-            user = rows[0]['FirstName']
-            cur.execute("DELETE FROM Members WHERE StudentId="+request.form['studentid']+" and PhoneNumber="+request.form['phonenumber'])
-            return render_template('default_form.html', message="Goodbye "+user)
+#            rows = cur.fetchall()
+#            if rows[0]['Password']!=str(request.form['password']):
+#                cur.close()
+#                return render_template('default_form.html', message = 'You put wrong password')
+            for i in range(1000):
+                cur.execute("DELETE FROM Members WHERE StudentId="+request.form['studentid']+" and No="+str(i)+" and Password=\'"+request.form['password']+"\'")
+            return render_template('default_form.html', message="Goodbye")
     else:
         return render_template('default_form.html', message = 'Wrong approach')
 
@@ -92,11 +103,13 @@ def find():
                 cur.close()
                 return render_template('default_form.html', message = 'There is no such a member' )
             
-            rows = cur.fetchall()
-            user = rows[0]['FirstName']
-
-            cur.execute("UPDATE Members SET Password=\'"+request.form['password']+"\' WHERE StudentId="+request.form['studentid'])
-            return render_template('default_form.html', message = user+", your password is updated")
+#            rows = cur.fetchall()
+#            user = rows[0]['FirstName']
+#            lastname = rows[0]['LastName']  
+#            cur.execute("UPDATE Members SET Password=\'"+request.form['password']+"\' WHERE StudentId="+request.form['studentid'])
+            for i in range(1000):
+                cur.execute("UPDATE Members SET Password=\'"+request.form['password']+"\' WHERE StudentId="+request.form['studentid']+" and No="+str(i))
+            return render_template('default_form.html', message = "Your password is updated")
     else:
         return render_template('default_form.html', message = 'Wrong approach')
 
